@@ -1,15 +1,21 @@
-import { Body, Controller, Post, Get, Param, Query, Delete, Patch, NotFoundException, Session } from '@nestjs/common';
+import { Body, Controller, Post, Get, Param, Query, Delete, Patch, NotFoundException, Session, UseGuards } from '@nestjs/common';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dtos/update-user.dto copy';
 import { UserDto } from './dtos/user.dto';
 import { Serializer } from 'src/Interceptors/serializer.Interceptor';
 import { AuthService } from './auth.service';
+import { User } from './user.entity';
+import { CurrentUser } from './decorators/current-user.decorator';
+import { AuthGuard } from 'src/guards/auth.guard';
+
 
 @Controller('auth')
 @Serializer(UserDto)
 export class UsersController {
   constructor(private usersService: UsersService, private authService: AuthService) { }
+
+ 
 
   @Post('/signup')
   async createUser(@Body() body: CreateUserDto, @Session() session: any) {
@@ -36,12 +42,19 @@ export class UsersController {
     if (!user) throw new NotFoundException('User not found');
     return user
   }
-  @Get('findUserByCookie')
-  async findUserByCookie(@Session() session: any) {    
-    const user = await this.usersService.findOne(session.userId)
-    if (!user) throw new NotFoundException('User not found');
-    return user
+  // @Get('/findUserByCookie')
+  // async findUserByCookie(@Session() session: any) {
+  //   const user = await this.usersService.findOne(session.userId)
+  //   if (!user) throw new NotFoundException('User not found');
+  //   return user
+  // }
+
+  @Get('/findUserByCookie')
+  @UseGuards(AuthGuard)
+  whoAmI(@CurrentUser() user: User) {
+    return user;
   }
+
 
   @Get()
   findAllUsers(@Query('email') email: string) {
