@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -8,7 +8,10 @@ export class UsersService {
     constructor(@InjectRepository(User) private repo: Repository<User>) { }
     create = (email: string, password: string) => this.repo.save(this.repo.create({ email, password }))
 
-    findOne = (id: number) => this.repo.findOne({ where: { id } })
+    findOne = (id: number) => {
+        if(!id) throw new BadRequestException('you must include a number')
+        return this.repo.findOne({ where: { id } })
+    }
 
     find = (email: string) => this.repo.find({ where: { email } })
 
