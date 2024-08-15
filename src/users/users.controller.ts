@@ -3,15 +3,15 @@ import { CreateUserDto } from './dtos/create-user.dto';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { UserDto } from './dtos/user.dto';
-import { Serializer } from 'src/Interceptors/serializer.Interceptor';
 import { AuthService } from './auth.service';
 import { User } from './user.entity';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { AuthGuard } from 'src/guards/auth.guard';
+import { Serialize } from 'src/Interceptors/serialize.interceptor';
 
 
 @Controller('auth')
-@Serializer(UserDto)
+@Serialize(UserDto)
 export class UsersController {
   constructor(private usersService: UsersService, private authService: AuthService) { }
 
