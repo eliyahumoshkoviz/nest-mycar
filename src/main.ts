@@ -12,6 +12,7 @@ app.use(cookieSession({
 
   app.useGlobalPipes(
     new ValidationPipe({
+      //prevents the insertion of additional fields
       whitelist: true,
     }),
   );
